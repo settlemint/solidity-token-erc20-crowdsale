@@ -25,7 +25,12 @@ anvil:
 
 deploy-anvil:
 	@echo "Deploying with Forge to Anvil..."
-	@forge create ./src/Counter.sol:Counter --rpc-url anvil --interactive | tee deployment-anvil.txt
+	@timestamp=$$(date +"%s") && \
+	forge create ./src/ExampleToken.sol:ExampleToken --rpc-url anvil --interactive --constructor-args "ExampleToken" "ET" "3500000" "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" |  sed 's/Deployed to:/Deployed ExampleToken to:/' | tee deployment-anvil.txt && \
+	forge create ./src/ExampleVestingWallet.sol:ExampleVestingWallet --rpc-url anvil --interactive --constructor-args "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" $$timestamp "31536000" |  sed 's/Deployed to:/Deployed ExampleVestingWallet to:/' | tee -a deployment-anvil.txt && \
+	forge create ./src/ExampleVestingVault.sol:ExampleVestingVault --rpc-url anvil --interactive --constructor-args "$$(grep "Deployed ExampleToken to:" deployment-anvil.txt | awk '{print $$4}')" |  sed 's/Deployed to:/Deployed ExampleVestingVault to:/' | tee -a deployment-anvil.txt && \
+	forge create ./src/ExampleCrowdSale.sol:ExampleCrowdSale --rpc-url anvil --interactive --constructor-args "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" "$$(grep "Deployed ExampleToken to:" deployment-anvil.txt | awk '{print $$4}')" "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" "250" $$timestamp "$$(grep "Deployed ExampleVestingVault to:" deployment-anvil.txt | awk '{print $$4}')" |  sed 's/Deployed to:/Deployed ExampleCrowdSale to:/' | tee -a deployment-anvil.txt
+
 
 deploy-btp:
 	@eval $$(curl -H "x-auth-token: $${BTP_SERVICE_TOKEN}" -s $${BTP_CLUSTER_MANAGER_URL}/ide/foundry/$${BTP_SCS_ID}/env | sed 's/^/export /'); \
@@ -43,32 +48,42 @@ deploy-btp:
 	if [ "$${BTP_EIP_1559_ENABLED}" = "false" ]; then \
 		args="$$args --legacy"; \
 	fi; \
-	forge create ./src/Counter.sol:Counter $${EXTRA_ARGS} --rpc-url $${BTP_RPC_URL} $$args --constructor-args "GenericToken" "GT" | tee deployment.txt;
+	@timestamp=$$(date +"%s") && \
+	forge create ./src/ExampleToken.sol:ExampleToken $${EXTRA_ARGS} --rpc-url $${BTP_RPC_URL} $$args --constructor-args "ExampleToken" "ET" "3500000" "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" |  sed 's/Deployed to:/Deployed ExampleToken to:/' | tee deployment-btp.txt && \
+	forge create ./src/ExampleVestingWallet.sol:ExampleVestingWallet $${EXTRA_ARGS} --rpc-url $${BTP_RPC_URL} $$args --constructor-args "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" $$timestamp "31536000" |  sed 's/Deployed to:/Deployed ExampleVestingWallet to:/' | tee -a deployment-btp.txt && \
+	forge create ./src/ExampleVestingVault.sol:ExampleVestingVault $${EXTRA_ARGS} --rpc-url $${BTP_RPC_URL} $$args --constructor-args "$$(grep "Deployed ExampleToken to:" deployment-anvil.txt | awk '{print $$4}')" |  sed 's/Deployed to:/Deployed ExampleVestingVault to:/' | tee -a deployment-btp.txt && \
+	forge create ./src/ExampleCrowdSale.ExampleCrowdSale $${EXTRA_ARGS} --rpc-url $${BTP_RPC_URL} $$args --constructor-args "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" "$$(grep "Deployed ExampleToken to:" deployment-anvil.txt | awk '{print $$4}')" "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" "250" $$timestamp "$$(grep "Deployed ExampleVestingVault to:" deployment-anvil.txt | awk '{print $$4}')" |  sed 's/Deployed to:/Deployed ExampleCrowdSale to:/' | tee -a deployment-btp.txt
 
-script-anvil:
-	@if [ ! -f deployment-anvil.txt ]; then \
-		echo "\033[1;31mERROR: Contract was not deployed or the deployment-anvil.txt went missing.\033[0m"; \
-		exit 1; \
-	fi
-	@DEPLOYED_ADDRESS=$$(grep "Deployed to:" deployment-anvil.txt | awk '{print $$3}') forge script script/Counter.s.sol:CounterScript ${EXTRA_ARGS} --rpc-url anvil -i=1
-
-script:
-	@if [ ! -f deployment.txt ]; then \
-		echo "\033[1;31mERROR: Contract was not deployed or the deployment.txt went missing.\033[0m"; \
-		exit 1; \
-	fi
-	@eval $$(curl -H "x-auth-token: $${BTP_SERVICE_TOKEN}" -s $${BTP_CLUSTER_MANAGER_URL}/ide/foundry/$${BTP_SCS_ID}/env | sed 's/^/export /'); \
-	if [ -z "${BTP_FROM}" ]; then \
-		echo "\033[1;33mWARNING: No keys are activated on the node, falling back to interactive mode...\033[0m"; \
-		echo ""; \
-		@DEPLOYED_ADDRESS=$$(grep "Deployed to:" deployment.txt | awk '{print $$3}') forge script script/Counter.s.sol:CounterScript ${EXTRA_ARGS} --rpc-url ${BTP_RPC_URL} -i=1; \
-	else \
-		@DEPLOYED_ADDRESS=$$(grep "Deployed to:" deployment.txt | awk '{print $$3}') forge script script/Counter.s.sol:CounterScript ${EXTRA_ARGS} --rpc-url ${BTP_RPC_URL} --unlocked --froms ${BTP_FROM}; \
-	fi
 
 cast:
 	@echo "Interacting with EVM via Cast..."
 	@cast $(SUBCOMMAND)
+
+
+subgraph:
+	@echo "Deploying the subgraph..."
+	@rm -Rf subgraph/subgraph.config.json
+	@TOKEN_ADDRESS=$$(grep "Deployed ExampleToken to:" deployment.txt | awk '{print $$4}') && \
+	VESTING_WALLET_ADDRESS=$$(grep "Deployed ExampleVestingWallet to:" deployment.txt | awk '{print $$4}') && \
+	VESTING_VAULT_ADDRESS=$$(grep "Deployed ExampleVestingVault to:" deployment.txt | awk '{print $$4}') && \
+	CROWDSALE_ADDRESS=$$(grep "Deployed ExampleCrowdSale to:" deployment.txt | awk '{print $$4}') && \
+	yq e -p=json -o=json '.datasources[0].address = strenv(TOKEN_ADDRESS) | .datasources[1].address = strenv(CROWDSALE_ADDRESS) | .datasources[2].address = strenv(VESTING_VAULT_ADDRESS) | .datasources[3].address = strenv(VESTING_WALLET_ADDRESS) | .chain = env(BTP_NODE_UNIQUE_NAME)' subgraph/subgraph.config.template.json > subgraph/subgraph.config.json
+	@cd subgraph && npx graph-compiler --config subgraph.config.json --include node_modules/@openzeppelin/subgraphs/src/datasources ./datasources --export-schema --export-subgraph
+	@cd subgraph && yq e '.specVersion = "0.0.4"' -i generated/solidity-token-erc20-crowdsale.subgraph.yaml
+	@cd subgraph && yq e '.description = "Solidity Token ERC20 CrowdSale"' -i generated/solidity-token-erc20-crowdsale.subgraph.yaml
+	@cd subgraph && yq e '.repository = "https://github.com/settlemint/solidity-token-erc20-crowdsale"' -i generated/solidity-token-erc20-crowdsale.subgraph.yaml
+	@cd subgraph && yq e '.features = ["nonFatalErrors", "fullTextSearch", "ipfsOnEthereumContracts"]' -i generated/solidity-token-erc20-crowdsale.subgraph.yaml
+	@cd subgraph && npx graph codegen generated/solidity-token-erc20-crowdsale.subgraph.yaml
+	@cd subgraph && npx graph build generated/solidity-token-erc20-crowdsale.subgraph.yaml
+	@eval $$(curl -H "x-auth-token: $${BTP_SERVICE_TOKEN}" -s $${BTP_CLUSTER_MANAGER_URL}/ide/foundry/$${BTP_SCS_ID}/env | sed 's/^/export /'); \
+	if [ -z "$${BTP_MIDDLEWARE}" ]; then \
+		echo "\033[1;31mERROR: You have not launched a graph middleware for this smart contract set, aborting...\033[0m"; \
+		exit 1; \
+	else \
+		cd subgraph; \
+		npx graph create --node $${BTP_MIDDLEWARE} $${BTP_SCS_NAME}; \
+		npx graph deploy --version-label v1.0.$$(date +%s) --node $${BTP_MIDDLEWARE} --ipfs $${BTP_IPFS}/api/v0 $${BTP_SCS_NAME} generated/solidity-token-erc20-crowdsale.subgraph.yaml; \
+	fi
 
 help:
 	@echo "Forge help..."
