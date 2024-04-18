@@ -67,7 +67,9 @@ subgraph:
 	VESTING_WALLET_ADDRESS=$$(grep "Deployed ExampleVestingWallet to:" deployment.txt | awk '{print $$4}') && \
 	VESTING_VAULT_ADDRESS=$$(grep "Deployed ExampleVestingVault to:" deployment.txt | awk '{print $$4}') && \
 	CROWDSALE_ADDRESS=$$(grep "Deployed ExampleCrowdSale to:" deployment.txt | awk '{print $$4}') && \
-	yq e -p=json -o=json '.datasources[0].address = strenv(TOKEN_ADDRESS) | .datasources[1].address = strenv(CROWDSALE_ADDRESS) | .datasources[2].address = strenv(VESTING_VAULT_ADDRESS) | .datasources[3].address = strenv(VESTING_WALLET_ADDRESS) | .chain = env(BTP_NODE_UNIQUE_NAME)' subgraph/subgraph.config.template.json > subgraph/subgraph.config.json
+	TRANSACTION_HASH=$$(grep "Transaction hash:" deployment.txt | awk '{print $$3}') && \
+	BLOCK_NUMBER=$$(cast receipt --rpc-url btp $${TRANSACTION_HASH} | grep "blockNumber" | awk '{print $$2}' | sed '2d') && \
+	yq e -p=json -o=json '.datasources[0].address = strenv(TOKEN_ADDRESS) | .datasources[1].address = strenv(CROWDSALE_ADDRESS) | .datasources[2].address = strenv(VESTING_VAULT_ADDRESS) | .datasources[3].address = strenv(VESTING_WALLET_ADDRESS) | .datasources[0].startBlock = env(BLOCK_NUMBER) | .datasources[1].startBlock = env(BLOCK_NUMBER) | .datasources[2].startBlock = env(BLOCK_NUMBER) | .datasources[3].startBlock = env(BLOCK_NUMBER) | .chain = env(BTP_NODE_UNIQUE_NAME)' subgraph/subgraph.config.template.json > subgraph/subgraph.config.json
 	@cd subgraph && npx graph-compiler --config subgraph.config.json --include node_modules/@openzeppelin/subgraphs/src/datasources ./datasources --export-schema --export-subgraph
 	@cd subgraph && yq e '.specVersion = "0.0.4"' -i generated/solidity-token-erc20-crowdsale.subgraph.yaml
 	@cd subgraph && yq e '.description = "Solidity Token ERC20 CrowdSale"' -i generated/solidity-token-erc20-crowdsale.subgraph.yaml
