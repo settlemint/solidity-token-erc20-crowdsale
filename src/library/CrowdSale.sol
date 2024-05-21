@@ -12,7 +12,7 @@ import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {AggregatorV3Interface} from "./AggregatorV3Interface.sol";
 import {VestingVault} from "./VestingVault.sol";
-import {ICrowdSale} from "./ICrowdSale.sol";
+import {ICrowdSale} from "./ICrowdsale.sol";
 
 /**
  * @title CrowdSale
