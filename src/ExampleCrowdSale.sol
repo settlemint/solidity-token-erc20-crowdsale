@@ -3,7 +3,7 @@
 
 pragma solidity ^0.8.17;
 
-import {CrowdSale} from "./library/Crowdsale.sol";
+import {CrowdSale} from "./library/CrowdSale.sol";
 
 /**
  * @title ExampleCrowdSale
