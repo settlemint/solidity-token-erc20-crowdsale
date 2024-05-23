@@ -13,7 +13,7 @@
         - ExampleVestingVault
       abis:
         - name: IVestingVault
-          file: {root}../out/IVestingVault.sol/IVestingVault.json
+          file: {root}/../out/IVestingVault.sol/IVestingVault.json
       eventHandlers:
         - event: VestingLockedIn(indexed address,uint256,uint256)
           handler: handleVestingLockedIn

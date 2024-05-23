@@ -1,7 +1,7 @@
 import { events, transactions } from '@amxx/graphprotocol-utils';
 import { BigInt, Bytes } from '@graphprotocol/graph-ts';
-import { TokensPurchased as TokensPurchasedEvent } from '../../generated/crowdsale/ICrowdSale';
-import { CrowdSaleTokenPurchase } from '../../generated/schema';
+import { TokensPurchased as TokensPurchasedEvent } from '../generated/crowdsale/ICrowdSale';
+import { CrowdSaleTokenPurchase } from '../generated/schema';
 import { fetchAccount } from '../fetch/account';
 import { fetchCrowdSaleContract } from '../fetch/crowdsale';
 
