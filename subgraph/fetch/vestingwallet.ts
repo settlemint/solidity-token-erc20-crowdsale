@@ -1,6 +1,6 @@
 import { Address, BigInt } from '@graphprotocol/graph-ts';
-import { VestingWalletContract } from '../../generated/schema';
-import { VestingWallet } from '../../generated/vestingwallet/VestingWallet';
+import { VestingWalletContract } from '../generated/schema';
+import { VestingWallet } from '../generated/vestingwallet/VestingWallet';
 import { fetchAccount } from './account';
 
 export function fetchVestingWallet(address: Address): VestingWalletContract {
@@ -9,14 +9,10 @@ export function fetchVestingWallet(address: Address): VestingWalletContract {
 
   if (contract == null) {
     const endpoint = VestingWallet.bind(address);
-    const beneficiary = endpoint.try_beneficiary();
     const start = endpoint.try_start();
     const duration = endpoint.try_duration();
     contract = new VestingWalletContract(account.id.toHex());
 
-    contract.beneficiary = beneficiary.reverted
-      ? null
-      : fetchAccount(beneficiary.value).id;
     contract.start = start.reverted ? null : start.value;
     contract.duration = duration.reverted ? null : duration.value;
     contract.erc20Released = BigInt.fromString('0');

@@ -1,11 +1,11 @@
 import { events, transactions } from '@amxx/graphprotocol-utils';
 import { Bytes } from '@graphprotocol/graph-ts';
 import { fetchERC20 } from '@openzeppelin/subgraphs/src/fetch/erc20';
-import { ERC20Released, EtherReleased } from '../../generated/schema';
+import { ERC20Released, EtherReleased } from '../generated/schema';
 import {
   ERC20Released as ERC20ReleasedEvent,
   EtherReleased as EtherReleasedEvent,
-} from '../../generated/vestingwallet/VestingWallet';
+} from '../generated/vestingwallet/VestingWallet';
 import { fetchVestingWallet } from '../fetch/vestingwallet';
 
 export function handleEtherReleased(event: EtherReleasedEvent): void {

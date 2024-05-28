@@ -1,8 +1,8 @@
 import { constants } from '@amxx/graphprotocol-utils';
 import { Address, BigInt } from '@graphprotocol/graph-ts';
 import { fetchERC20 } from '@openzeppelin/subgraphs/src/fetch/erc20';
-import { Account, Vesting, VestingVaultContract } from '../../generated/schema';
-import { IVestingVault } from '../../generated/vestingvault/IVestingVault';
+import { Account, Vesting, VestingVaultContract } from '../generated/schema';
+import { IVestingVault } from '../generated/vestingvault/IVestingVault';
 import { fetchAccount } from './account';
 
 export function fetchVestingVault(address: Address): VestingVaultContract {

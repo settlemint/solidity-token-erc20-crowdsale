@@ -14,7 +14,7 @@ docs/
 .env
 
 # Subgraphs
-deployment.txt
+deployment-btp.txt
 deployment-anvil.txt
 subgraph/subgraph.config.json
 subgraph/node_modules
