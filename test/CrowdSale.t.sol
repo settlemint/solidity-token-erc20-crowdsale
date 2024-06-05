@@ -146,6 +146,6 @@ contract CrowdSaleTest is Test {
             uint80 answeredInRound
         ) = priceFeed.getRoundData(1);
         assertEq(roundId, 1);
-        assertEq(aswer, 2000 * 10 ** 8);
+        assertEq(answer, 2000 * 10 ** 8);
     }
 }
