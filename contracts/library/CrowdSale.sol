@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // SettleMint.com
 
-pragma solidity ^0.8.17;
+pragma solidity 0.8.26;
 
 import {Context} from "@openzeppelin/contracts/utils/Context.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -110,6 +110,30 @@ contract CrowdSale is
     }
 
     /**
+     * @dev Triggers stopped state.
+     *
+     * Requirements:
+     *
+     * - The contract must not be paused.
+     * - The sender of the transaction must have the DEFAULT_ADMIN_ROLE
+     */
+    function pause() public whenNotPaused {
+        _pause();
+    }
+
+    /**
+     * @dev Returns to normal state.
+     *
+     * Requirements:
+     *
+     * - The contract must be paused.
+     * - The sender of the transaction must have the DEFAULT_ADMIN_ROLE
+     */
+    function unpause() public whenPaused {
+        _unpause();
+    }
+
+    /**
      * @return the address of the token being sold.
      */
     function token() public view override returns (IERC20) {
@@ -175,7 +199,9 @@ contract CrowdSale is
     {
         uint256 weiAmount = msg.value;
         preValidatePurchase(beneficiary, weiAmount);
+
         uint256 tokenAmount = getTokenAmount(weiAmount);
+
         _fundsRaised += weiAmount;
         processPurchase(beneficiary, tokenAmount);
         emit TokensPurchased(_msgSender(), beneficiary, weiAmount, tokenAmount);
@@ -262,7 +288,7 @@ contract CrowdSale is
      * @dev Converts the weiAmount into equivalent number of tokens
      * @param weiAmount Value of wei for conversion
      */
-    function getTokenAmount(uint256 weiAmount) internal view returns (uint256) {
+    function getTokenAmount(uint256 weiAmount) public view returns (uint256) {
         if (address(priceFeed) != address(0)) {
             (, int256 price, , , ) = priceFeed.latestRoundData();
             return ((weiAmount * uint256(price)) * _usdRate) / 10 ** 8;
@@ -274,7 +300,7 @@ contract CrowdSale is
      * @dev Converts the tokenAmount into equivalent number of wei
      * @param tokenAmount Number of tokens for convertion
      */
-    function getWeiAmount(uint256 tokenAmount) internal view returns (uint256) {
+    function getWeiAmount(uint256 tokenAmount) public view returns (uint256) {
         if (address(priceFeed) != address(0)) {
             (, int256 price, , , ) = priceFeed.latestRoundData();
             return (tokenAmount * 10 ** 8) / (uint256(price) * _usdRate);

@@ -1,7 +1,7 @@
 import { events, transactions } from '@amxx/graphprotocol-utils';
 import { Bytes } from '@graphprotocol/graph-ts';
-import { VestingLockedIn, VestingReleased } from '../generated/schema';
-import { VestingLockedIn as VestingLockedInEvent } from '../generated/vestingvault/IVestingVault';
+import { VestingLockedIn, VestingReleased } from '../../generated/schema';
+import { VestingLockedIn as VestingLockedInEvent } from '../../generated/vestingvault/IVestingVault';
 import { fetchAccount } from '../fetch/account';
 import { fetchVesting, fetchVestingVault } from '../fetch/vestingvault';
 

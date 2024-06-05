@@ -1,7 +1,7 @@
 import { Address, BigInt } from '@graphprotocol/graph-ts';
 import { fetchERC20 } from '@openzeppelin/subgraphs/src/fetch/erc20';
-import { ICrowdSale } from '../generated/crowdsale/ICrowdSale';
-import { CrowdSaleContract } from '../generated/schema';
+import { ICrowdSale } from '../../generated/crowdsale/ICrowdSale';
+import { CrowdSaleContract } from '../../generated/schema';
 import { fetchAccount } from './account';
 
 export function fetchCrowdSaleContract(

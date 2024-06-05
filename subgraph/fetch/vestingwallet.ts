@@ -1,6 +1,6 @@
 import { Address, BigInt } from '@graphprotocol/graph-ts';
-import { VestingWalletContract } from '../generated/schema';
-import { VestingWallet } from '../generated/vestingwallet/VestingWallet';
+import { VestingWalletContract } from '../../generated/schema';
+import { VestingWallet } from '../../generated/vestingwallet/VestingWallet';
 import { fetchAccount } from './account';
 
 export function fetchVestingWallet(address: Address): VestingWalletContract {
