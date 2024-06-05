@@ -59,6 +59,19 @@ contract CrowdSaleTest is Test {
         vestingVault.grantRole(VAULT_CONTROLLER_ROLE, address(crowdSale));
     }
 
+    function testWithoutFeed() public {
+        CrowdSale crowdSaleNoFeed = new CrowdSale(
+            address(0),
+            address(token),
+            wallet,
+            usdRate,
+            vestingEndDate,
+            address(vestingVault)
+        );
+        assertEq(crowdSaleNoFeed.getTokenAmount(1), 1000);
+        assertEq(crowdSaleNoFeed.getWeiAmount(10), 100);
+    }
+
     function testInitialization() public {
         assertEq(crowdSale.wallet(), wallet);
         assertEq(address(crowdSale.token()), address(token));
