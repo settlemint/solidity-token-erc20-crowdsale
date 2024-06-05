@@ -132,4 +132,10 @@ contract CrowdSaleTest is Test {
         assertTrue(crowdSale.supportsInterface(type(ICrowdSale).interfaceId));
         assertTrue(crowdSale.supportsInterface(type(Pausable).interfaceId));
     }
+
+    function testMockAggregator() public {
+        assertEq(priceFeed.decimals(), 8);
+        assertEq(priceFeed.description(), "Mock Aggregator");
+        assertEq(priceFeed.version(), 1);
+    }
 }
