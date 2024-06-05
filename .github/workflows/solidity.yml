@@ -39,4 +39,4 @@ jobs:
       docker-image-name: solidity-token-erc20-crowdsale
       runs-on: solidity-token-erc20-crowdsale
       ignition-module: 'ignition/modules/Crowdsale.ts'
-      subgraph-contract-address-key: 'CrowdsaleModule#Crowdsale'
+      subgraph-contract-address-key: 'CrowdsaleModule#token'
