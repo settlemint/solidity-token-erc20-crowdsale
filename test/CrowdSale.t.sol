@@ -133,6 +133,7 @@ contract CrowdSaleTest is Test {
         assertTrue(crowdSale.supportsInterface(type(ICrowdSale).interfaceId));
         assertTrue(crowdSale.supportsInterface(type(Pausable).interfaceId));
         assertTrue(token.supportsInterface(type(IERC165).interfaceId));
+        assertTrue(vestingVault.supportsInterface(type(IERC165).interfaceId));
     }
 
     function testMockAggregator() public {
