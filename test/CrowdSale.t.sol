@@ -5,10 +5,10 @@ import "forge-std/Test.sol";
 import "forge-std/console.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "../src/ExampleToken.sol";
-import "../src/ExampleCrowdSale.sol";
-import "../src/ExampleVestingVault.sol";
-import "../src/library/IVestingVault.sol";
+import "../contracts/ExampleToken.sol";
+import "../contracts/ExampleCrowdSale.sol";
+import "../contracts/ExampleVestingVault.sol";
+import "../contracts/library/IVestingVault.sol";
 
 contract ExampleCrowdSaleTest is Test {
     ExampleToken private token;

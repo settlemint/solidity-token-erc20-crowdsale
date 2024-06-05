@@ -13,7 +13,7 @@
         - ExampleCrowdSale
       abis:
         - name: ICrowdSale
-          file: {root}/../out/ICrowdSale.sol/ICrowdSale.json
+          file: {root}/out/ICrowdSale.sol/ICrowdSale.json
       eventHandlers:
         - event: TokensPurchased(indexed address,indexed address,uint256,uint256)
           handler: handleTokensPurchased
