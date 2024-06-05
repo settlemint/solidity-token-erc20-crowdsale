@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // SettleMint.com
 
-pragma solidity ^0.8.17;
+pragma solidity 0.8.26;
 
 import {Context} from "@openzeppelin/contracts/utils/Context.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // SettleMint.com
 
-pragma solidity ^0.8.17;
+pragma solidity 0.8.26;
 
 import {IVestingVault} from "./IVestingVault.sol";
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";

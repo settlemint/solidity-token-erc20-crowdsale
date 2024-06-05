@@ -7,6 +7,7 @@ import "../contracts/ExampleToken.sol";
 import "../contracts/library/VestingVault.sol";
 import "../contracts/library/AggregatorV3Interface.sol";
 import "../contracts/MockAggregatorV3.sol";
+import {ERC165, IERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 
 contract CrowdSaleTest is Test {
     CrowdSale public crowdSale;
@@ -131,6 +132,7 @@ contract CrowdSaleTest is Test {
     function testSupportsInterface() public {
         assertTrue(crowdSale.supportsInterface(type(ICrowdSale).interfaceId));
         assertTrue(crowdSale.supportsInterface(type(Pausable).interfaceId));
+        assertTrue(token.supportsInterface(type(IERC165).interfaceId));
     }
 
     function testMockAggregator() public {
