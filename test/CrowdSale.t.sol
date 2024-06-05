@@ -66,7 +66,7 @@ contract CrowdSaleTest is Test {
     }
 
     function testTokensAvailable() public {
-        console.log(crowdSale.tokensAvailable());
+        assertEq(1000000 * 10 ** 18, crowdSale.tokensAvailable());
     }
 
     function testBuyTokens() public {
@@ -76,7 +76,7 @@ contract CrowdSaleTest is Test {
         vm.prank(whitelisted);
         crowdSale.buyTokens{value: buyAmount}(whitelisted);
 
-        uint256 tokenAmount = crowdSale.getTokenAmount(buyAmount);
+        crowdSale.getTokenAmount(buyAmount);
         assertEq(crowdSale.fundsRaised(), buyAmount);
     }
 
@@ -159,5 +159,38 @@ contract CrowdSaleTest is Test {
         ) = priceFeed.getRoundData(1);
         assertEq(roundId, 1);
         assertEq(answer, 2000 * 10 ** 8);
+        assertEq(startedAt, 1);
+        assertEq(updatedAt, 1);
+        assertEq(answeredInRound, 1);
+    }
+
+    function testFallback() public {
+        uint256 initialBalance = wallet.balance;
+        uint256 buyAmount = 1 ether;
+
+        vm.deal(whitelisted, 2 ether); // Provide enough ether to the whitelisted account
+
+        vm.prank(whitelisted);
+        (bool success, ) = address(crowdSale).call{value: buyAmount}("");
+        assertTrue(success, "Fallback function call failed");
+
+        uint256 tokenAmount = crowdSale.getTokenAmount(buyAmount);
+        assertEq(token.balanceOf(address(vestingVault)), tokenAmount);
+        assertEq(wallet.balance, initialBalance + buyAmount);
+    }
+
+    function testReceive() public {
+        uint256 initialBalance = wallet.balance;
+        uint256 buyAmount = 1 ether;
+
+        vm.deal(whitelisted, 2 ether); // Provide enough ether to the whitelisted account
+
+        vm.prank(whitelisted);
+        (bool success, ) = address(crowdSale).call{value: buyAmount}("");
+        assertTrue(success, "Receive function call failed");
+
+        uint256 tokenAmount = crowdSale.getTokenAmount(buyAmount);
+        assertEq(token.balanceOf(address(vestingVault)), tokenAmount);
+        assertEq(wallet.balance, initialBalance + buyAmount);
     }
 }
