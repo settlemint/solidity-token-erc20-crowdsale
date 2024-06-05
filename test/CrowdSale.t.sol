@@ -137,5 +137,15 @@ contract CrowdSaleTest is Test {
         assertEq(priceFeed.decimals(), 8);
         assertEq(priceFeed.description(), "Mock Aggregator");
         assertEq(priceFeed.version(), 1);
+
+        (
+            uint80 roundId,
+            int256 answer,
+            uint256 startedAt,
+            uint256 updatedAt,
+            uint80 answeredInRound
+        ) = priceFeed.getRoundData(1);
+        assertEq(roundId, 1);
+        assertEq(aswer, 2000 * 10 ** 8);
     }
 }
