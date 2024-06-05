@@ -65,6 +65,10 @@ contract CrowdSaleTest is Test {
         assertEq(crowdSale.fundsRaised(), 0);
     }
 
+    function testTokensAvailable() public {
+        console.log(crowdSale.tokensAvailable());
+    }
+
     function testBuyTokens() public {
         uint256 buyAmount = 1 ether;
 
@@ -134,6 +138,11 @@ contract CrowdSaleTest is Test {
         assertTrue(crowdSale.supportsInterface(type(Pausable).interfaceId));
         assertTrue(token.supportsInterface(type(IERC165).interfaceId));
         assertTrue(vestingVault.supportsInterface(type(IERC165).interfaceId));
+    }
+
+    function testCrowdsaleParameters() public {
+        assertEq(address(crowdSale.token()), address(token));
+        assertEq(crowdSale.wallet(), wallet);
     }
 
     function testMockAggregator() public {
