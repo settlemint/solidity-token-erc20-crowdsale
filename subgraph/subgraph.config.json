@@ -1,0 +1,30 @@
+{
+  "output": "generated/scs.",
+  "chain": "localhost",
+  "datasources": [
+    {
+      "name": "ExampleToken",
+      "address": "0x0000000000000000000000000000000000000000",
+      "startBlock": 0,
+      "module": ["erc20", "accesscontrol"]
+    },
+    {
+      "name": "ExampleCrowdSale",
+      "address": "0x0000000000000000000000000000000000000000",
+      "startBlock": 0,
+      "module": ["pausable", "accesscontrol", "crowdsale"]
+    },
+    {
+      "name": "ExampleVestingVault",
+      "address": "0x0000000000000000000000000000000000000000",
+      "startBlock": 0,
+      "module": ["accesscontrol", "vestingvault"]
+    },
+    {
+      "name": "ExampleVestingWallet",
+      "address": "0x0000000000000000000000000000000000000000",
+      "startBlock": 0,
+      "module": ["vestingwallet"]
+    }
+  ]
+}

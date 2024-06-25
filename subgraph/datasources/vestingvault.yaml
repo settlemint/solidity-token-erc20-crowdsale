@@ -1,0 +1,22 @@
+  - kind: ethereum/contract
+    name: {id}
+    network: {chain}
+    source:
+      address: '{address}'
+      abi: IVestingVault
+      startBlock: {startBlock}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - ExampleVestingVault
+      abis:
+        - name: IVestingVault
+          file: {root}/out/IVestingVault.sol/IVestingVault.json
+      eventHandlers:
+        - event: VestingLockedIn(indexed address,uint256,uint256)
+          handler: handleVestingLockedIn
+        - event: VestingReleased(indexed address,uint256,uint256)
+          handler: handleVestingReleased
+      file: {file}

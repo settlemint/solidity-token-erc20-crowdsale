@@ -1,0 +1,80 @@
+[
+  {
+    "name": "Account",
+    "fields": [
+      { "name": "id", "type": "Bytes!" },
+      { "name": "asVestingWallet", "type": "VestingWalletContract" },
+      {
+        "name": "etherReleasedToEvents",
+        "type": "EtherReleased!",
+        "derived": "to"
+      },
+      {
+        "name": "etherReleasedFromEvents",
+        "type": "EtherReleased!",
+        "derived": "from"
+      },
+      {
+        "name": "ERC20ReleasedToEvents",
+        "type": "ERC20Released!",
+        "derived": "to"
+      },
+      {
+        "name": "ERC20ReleasedFromEvents",
+        "type": "ERC20Released!",
+        "derived": "from"
+      }
+    ]
+  },
+  {
+    "name": "VestingWalletContract",
+    "immutable": true,
+    "fields": [
+      { "name": "asAccount", "type": "Account!" },
+      { "name": "beneficiary", "type": "Account" },
+      { "name": "start", "type": "BigInt" },
+      { "name": "duration", "type": "BigInt" },
+      { "name": "etherReleased", "type": "BigInt!" },
+      { "name": "erc20Released", "type": "BigInt!" },
+      {
+        "name": "etherReleasedEvents",
+        "type": "EtherReleased!",
+        "derived": "contract"
+      },
+      {
+        "name": "erc20ReleasedEvents",
+        "type": "ERC20Released!",
+        "derived": "contract"
+      }
+    ]
+  },
+  {
+    "name": "EtherReleased",
+    "immutable": true,
+    "parent": "Event",
+    "fields": [
+      { "name": "emitter", "type": "Account!" },
+      { "name": "transaction", "type": "Transaction!" },
+      { "name": "timestamp", "type": "BigInt!" },
+      { "name": "amount", "type": "BigInt!" },
+      { "name": "from", "type": "Account" },
+      { "name": "to", "type": "Account" },
+      { "name": "contract", "type": "VestingWalletContract!" }
+    ]
+  },
+  {
+    "name": "ERC20Released",
+    "immutable": true,
+    "parent": "Event",
+    "fields": [
+      { "name": "emitter", "type": "Account!" },
+      { "name": "transaction", "type": "Transaction!" },
+      { "name": "timestamp", "type": "BigInt!" },
+      { "name": "amount", "type": "BigInt!" },
+      { "name": "from", "type": "Account" },
+      { "name": "to", "type": "Account" },
+      { "name": "token", "type": "ERC20Contract!" },
+      { "name": "contract", "type": "VestingWalletContract!" }
+    ]
+  }
+]

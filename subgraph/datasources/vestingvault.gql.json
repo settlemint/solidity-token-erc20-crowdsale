@@ -1,0 +1,79 @@
+[
+  {
+    "name": "Account",
+    "fields": [
+      { "name": "id", "type": "Bytes!" },
+      { "name": "asVestingVault", "type": "VestingVaultContract" },
+      {
+        "name": "vestingLockedInForEvent",
+        "type": "VestingLockedIn!",
+        "derived": "beneficiary"
+      },
+      {
+        "name": "vestingReleasedToEvent",
+        "type": "VestingReleased!",
+        "derived": "beneficiary"
+      },
+      {
+        "name": "vestingVaultVestings",
+        "type": "Vesting!",
+        "derived": "beneficiary"
+      }
+    ]
+  },
+  {
+    "name": "VestingVaultContract",
+    "immutable": true,
+    "fields": [
+      { "name": "asAccount", "type": "Account!" },
+      { "name": "token", "type": "ERC20Contract" },
+      { "name": "vestings", "type": "Vesting!", "derived": "contract" },
+      {
+        "name": "vestingsLockedIn",
+        "type": "VestingLockedIn!",
+        "derived": "contract"
+      },
+      {
+        "name": "vestingsReleased",
+        "type": "VestingReleased!",
+        "derived": "contract"
+      }
+    ]
+  },
+  {
+    "name": "Vesting",
+    "fields": [
+      { "name": "contract", "type": "VestingVaultContract!" },
+      { "name": "beneficiary", "type": "Account!" },
+      { "name": "tokenAmount", "type": "BigInt!" },
+      { "name": "releaseTime", "type": "BigInt!" }
+    ]
+  },
+  {
+    "name": "VestingLockedIn",
+    "immutable": true,
+    "parent": "Event",
+    "fields": [
+      { "name": "emitter", "type": "Account!" },
+      { "name": "transaction", "type": "Transaction!" },
+      { "name": "timestamp", "type": "BigInt!" },
+      { "name": "contract", "type": "VestingVaultContract!" },
+      { "name": "beneficiary", "type": "Account!" },
+      { "name": "tokenAmount", "type": "BigInt!" },
+      { "name": "releaseTime", "type": "BigInt!" }
+    ]
+  },
+  {
+    "name": "VestingReleased",
+    "immutable": true,
+    "parent": "Event",
+    "fields": [
+      { "name": "emitter", "type": "Account!" },
+      { "name": "transaction", "type": "Transaction!" },
+      { "name": "timestamp", "type": "BigInt!" },
+      { "name": "contract", "type": "VestingVaultContract!" },
+      { "name": "beneficiary", "type": "Account!" },
+      { "name": "tokenAmount", "type": "BigInt!" }
+    ]
+  }
+]
