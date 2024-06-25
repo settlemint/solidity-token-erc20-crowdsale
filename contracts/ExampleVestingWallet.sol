@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // SettleMint.com
 
-pragma solidity 0.8.26;
+pragma solidity ^0.8.24;
 
 import {VestingWallet} from "@openzeppelin/contracts/finance/VestingWallet.sol";
 
