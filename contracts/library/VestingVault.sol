@@ -95,6 +95,7 @@ contract VestingVault is IVestingVault, ERC165, AccessControl {
         }
         require(tokensToRelease > 0, "VestingVault: Cannot release 0 tokens");
 
-        token().transfer(_msgSender(), tokensToRelease);
+        bool success = token().transfer(_msgSender(), tokensToRelease);
+        require(success, "Token transfer unsuccessful");
     }
 }

@@ -255,7 +255,8 @@ contract CrowdSale is
      * @param tokenAmount Number of tokens to be transferred
      */
     function deliverTokens(address beneficiary, uint256 tokenAmount) internal {
-        _token.transfer(beneficiary, tokenAmount);
+        bool success = _token.transfer(beneficiary, tokenAmount);
+        require(success, "Transfer unsuccessful");
     }
 
     /**
@@ -290,6 +291,7 @@ contract CrowdSale is
      */
     function getTokenAmount(uint256 weiAmount) public view returns (uint256) {
         if (address(priceFeed) != address(0)) {
+            // slither-disable-next-line all
             (, int256 price, , , ) = priceFeed.latestRoundData();
             return ((weiAmount * uint256(price)) * _usdRate) / 10 ** 8;
         }
@@ -302,10 +304,11 @@ contract CrowdSale is
      */
     function getWeiAmount(uint256 tokenAmount) public view returns (uint256) {
         if (address(priceFeed) != address(0)) {
+            // slither-disable-next-line all
             (, int256 price, , , ) = priceFeed.latestRoundData();
             return (tokenAmount * 10 ** 8) / (uint256(price) * _usdRate);
         }
-        return (((tokenAmount) / 10) * _usdRate); // fixed rate of 10 USD per ETH
+        return (((tokenAmount) * _usdRate) / 10); // fixed rate of 10 USD per ETH
     }
 
     /**
