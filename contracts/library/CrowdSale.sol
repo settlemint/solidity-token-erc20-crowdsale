@@ -3,28 +3,21 @@
 
 pragma solidity ^0.8.24;
 
-import {Context} from "@openzeppelin/contracts/utils/Context.sol";
-import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
-import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import {AggregatorV3Interface} from "./AggregatorV3Interface.sol";
-import {VestingVault} from "./VestingVault.sol";
-import {ICrowdSale} from "./ICrowdSale.sol";
+import { Context } from "@openzeppelin/contracts/utils/Context.sol";
+import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
+import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
+import { ERC165 } from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
+import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import { AggregatorV3Interface } from "./AggregatorV3Interface.sol";
+import { VestingVault } from "./VestingVault.sol";
+import { ICrowdSale } from "./ICrowdSale.sol";
 
 /**
  * @title CrowdSale
  */
-contract CrowdSale is
-    Context,
-    ERC165,
-    Pausable,
-    AccessControl,
-    ReentrancyGuard,
-    ICrowdSale
-{
+contract CrowdSale is Context, ERC165, Pausable, AccessControl, ReentrancyGuard, ICrowdSale {
     bytes32 public constant WHITELISTED_ROLE = keccak256("WHITELISTED_ROLE");
 
     // The token being sold
@@ -77,13 +70,9 @@ contract CrowdSale is
         _vestingVault = VestingVault(vestingVault_);
     }
 
-    function supportsInterface(
-        bytes4 interfaceId
-    ) public view virtual override(ERC165, AccessControl) returns (bool) {
-        return
-            interfaceId == type(ICrowdSale).interfaceId ||
-            interfaceId == type(Pausable).interfaceId ||
-            super.supportsInterface(interfaceId); // ERC165, AccessControl
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC165, AccessControl) returns (bool) {
+        return interfaceId == type(ICrowdSale).interfaceId || interfaceId == type(Pausable).interfaceId
+            || super.supportsInterface(interfaceId); // ERC165, AccessControl
     }
 
     /**
@@ -171,7 +160,13 @@ contract CrowdSale is
     function externalBuyTokens(
         address beneficiary,
         uint256 tokenAmount
-    ) public override nonReentrant whenNotPaused onlyRole(DEFAULT_ADMIN_ROLE) {
+    )
+        public
+        override
+        nonReentrant
+        whenNotPaused
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
         uint256 weiAmount = getWeiAmount(tokenAmount);
         preValidatePurchase(beneficiary, weiAmount);
         _fundsRaised += weiAmount;
@@ -187,9 +182,7 @@ contract CrowdSale is
      * another `nonReentrant` function.
      * @param beneficiary Recipient of the token purchase
      */
-    function buyTokens(
-        address beneficiary
-    )
+    function buyTokens(address beneficiary)
         public
         payable
         override
@@ -213,17 +206,11 @@ contract CrowdSale is
     /**
      * @dev Validates beneficiary and weiAmount before executing purchase
      */
-    function preValidatePurchase(
-        address beneficiary,
-        uint256 weiAmount
-    ) internal view {
-        require(
-            beneficiary != address(0),
-            "Crowdsale: beneficiary is the zero address"
-        );
+    function preValidatePurchase(address beneficiary, uint256 weiAmount) internal view {
+        require(beneficiary != address(0), "Crowdsale: beneficiary is the zero address");
         require(weiAmount != 0, "Crowdsale: amount is 0");
         this; // silence state mutability warning without generating bytecode - see
-        // https://github.com/ethereum/solidity/issues/2691
+            // https://github.com/ethereum/solidity/issues/2691
     }
 
     /**
@@ -232,16 +219,9 @@ contract CrowdSale is
      * @param beneficiary Address receiving the tokens
      * @param tokenAmount Number of tokens to be purchased
      */
-    function processPurchase(
-        address beneficiary,
-        uint256 tokenAmount
-    ) internal {
+    function processPurchase(address beneficiary, uint256 tokenAmount) internal {
         if (_vestingEndDate > 0) {
-            _vestingVault.addBeneficiary(
-                beneficiary,
-                _vestingEndDate,
-                tokenAmount
-            );
+            _vestingVault.addBeneficiary(beneficiary, _vestingEndDate, tokenAmount);
             deliverTokens(address(_vestingVault), tokenAmount);
         } else {
             deliverTokens(beneficiary, tokenAmount);
@@ -265,10 +245,7 @@ contract CrowdSale is
      * @param beneficiary Address performing the token purchase
      * @param weiAmount Value in wei involved in the purchase
      */
-    function postValidatePurchase(
-        address beneficiary,
-        uint256 weiAmount
-    ) internal view {
+    function postValidatePurchase(address beneficiary, uint256 weiAmount) internal view {
         // solhint-disable-previous-line no-empty-blocks
     }
 
@@ -278,10 +255,7 @@ contract CrowdSale is
      * @param beneficiary Address receiving the tokens
      * @param weiAmount Value in wei involved in the purchase
      */
-    function updatePurchasingState(
-        address beneficiary,
-        uint256 weiAmount
-    ) internal {
+    function updatePurchasingState(address beneficiary, uint256 weiAmount) internal {
         // solhint-disable-previous-line no-empty-blocks
     }
 
@@ -292,7 +266,7 @@ contract CrowdSale is
     function getTokenAmount(uint256 weiAmount) public view returns (uint256) {
         if (address(priceFeed) != address(0)) {
             // slither-disable-next-line all
-            (, int256 price, , , ) = priceFeed.latestRoundData();
+            (, int256 price,,,) = priceFeed.latestRoundData();
             return ((weiAmount * uint256(price)) * _usdRate) / 10 ** 8;
         }
         return ((weiAmount * 10) * _usdRate); // fixed rate of 10 USD per ETH
@@ -305,7 +279,7 @@ contract CrowdSale is
     function getWeiAmount(uint256 tokenAmount) public view returns (uint256) {
         if (address(priceFeed) != address(0)) {
             // slither-disable-next-line all
-            (, int256 price, , , ) = priceFeed.latestRoundData();
+            (, int256 price,,,) = priceFeed.latestRoundData();
             return (tokenAmount * 10 ** 8) / (uint256(price) * _usdRate);
         }
         return (((tokenAmount) * _usdRate) / 10); // fixed rate of 10 USD per ETH

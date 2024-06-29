@@ -3,17 +3,16 @@
 
 pragma solidity ^0.8.24;
 
-import {IVestingVault} from "./IVestingVault.sol";
-import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { IVestingVault } from "./IVestingVault.sol";
+import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
+import { ERC165 } from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /**
  * @title VestingVault
  */
 contract VestingVault is IVestingVault, ERC165, AccessControl {
-    bytes32 public constant VAULT_CONTROLLER_ROLE =
-        keccak256("VAULT_CONTROLLER_ROLE");
+    bytes32 public constant VAULT_CONTROLLER_ROLE = keccak256("VAULT_CONTROLLER_ROLE");
     IERC20 private immutable _token;
     mapping(address => Vesting[]) private _vesting;
 
@@ -23,12 +22,8 @@ contract VestingVault is IVestingVault, ERC165, AccessControl {
         _setRoleAdmin(VAULT_CONTROLLER_ROLE, DEFAULT_ADMIN_ROLE);
     }
 
-    function supportsInterface(
-        bytes4 interfaceId
-    ) public view virtual override(ERC165, AccessControl) returns (bool) {
-        return
-            interfaceId == type(IVestingVault).interfaceId ||
-            super.supportsInterface(interfaceId); // ERC165
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC165, AccessControl) returns (bool) {
+        return interfaceId == type(IVestingVault).interfaceId || super.supportsInterface(interfaceId); // ERC165
     }
 
     /**
@@ -41,7 +36,11 @@ contract VestingVault is IVestingVault, ERC165, AccessControl {
         address beneficiary_,
         uint256 releaseTime_,
         uint256 tokenAmount_
-    ) public override onlyRole(VAULT_CONTROLLER_ROLE) {
+    )
+        public
+        override
+        onlyRole(VAULT_CONTROLLER_ROLE)
+    {
         Vesting[] memory vestings = _vesting[beneficiary_];
 
         for (uint256 i = 0; i < vestings.length; i++) {
@@ -52,9 +51,7 @@ contract VestingVault is IVestingVault, ERC165, AccessControl {
             }
         }
 
-        _vesting[beneficiary_].push(
-            Vesting(beneficiary_, releaseTime_, tokenAmount_)
-        );
+        _vesting[beneficiary_].push(Vesting(beneficiary_, releaseTime_, tokenAmount_));
         emit VestingLockedIn(beneficiary_, releaseTime_, tokenAmount_);
         return;
     }
@@ -70,9 +67,7 @@ contract VestingVault is IVestingVault, ERC165, AccessControl {
      * @return the vesting for an address
      * @param beneficiary_ the address for which the vesting is returned
      */
-    function vestingFor(
-        address beneficiary_
-    ) public view override returns (Vesting[] memory) {
+    function vestingFor(address beneficiary_) public view override returns (Vesting[] memory) {
         return _vesting[beneficiary_];
     }
 
@@ -85,11 +80,7 @@ contract VestingVault is IVestingVault, ERC165, AccessControl {
         for (uint256 i = 0; i < vestings.length; i++) {
             if (vestings[i].releaseTime <= block.timestamp) {
                 tokensToRelease = tokensToRelease + vestings[i].tokenAmount;
-                emit VestingReleased(
-                    _msgSender(),
-                    vestings[i].releaseTime,
-                    vestings[i].tokenAmount
-                );
+                emit VestingReleased(_msgSender(), vestings[i].releaseTime, vestings[i].tokenAmount);
                 _vesting[_msgSender()][i].tokenAmount = 0;
             }
         }

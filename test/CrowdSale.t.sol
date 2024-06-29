@@ -7,7 +7,7 @@ import "../contracts/ExampleToken.sol";
 import "../contracts/library/VestingVault.sol";
 import "../contracts/library/AggregatorV3Interface.sol";
 import "../contracts/MockAggregatorV3.sol";
-import {ERC165, IERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
+import { ERC165, IERC165 } from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 
 contract CrowdSaleTest is Test {
     CrowdSale public crowdSale;
@@ -20,54 +20,30 @@ contract CrowdSaleTest is Test {
     address public admin = address(0x1);
     address public whitelisted = address(0x2);
 
-    bytes32 public constant VAULT_CONTROLLER_ROLE =
-        keccak256("VAULT_CONTROLLER_ROLE");
+    bytes32 public constant VAULT_CONTROLLER_ROLE = keccak256("VAULT_CONTROLLER_ROLE");
 
     function setUp() public {
         priceFeed = new MockAggregatorV3();
-        token = new ExampleToken(
-            "Test Token",
-            "TTK",
-            1000000 * 10 ** 18,
-            address(this)
-        );
+        token = new ExampleToken("Test Token", "TTK", 1_000_000 * 10 ** 18, address(this));
         vestingVault = new VestingVault(IERC20(address(token)));
-        crowdSale = new CrowdSale(
-            address(priceFeed),
-            address(token),
-            wallet,
-            usdRate,
-            vestingEndDate,
-            address(vestingVault)
-        );
+        crowdSale =
+            new CrowdSale(address(priceFeed), address(token), wallet, usdRate, vestingEndDate, address(vestingVault));
 
-        token.transfer(address(crowdSale), 1000000 * 10 ** 18); // Transfer tokens to the crowdsale contract
+        token.transfer(address(crowdSale), 1_000_000 * 10 ** 18); // Transfer tokens to the crowdsale contract
 
         crowdSale.grantRole(crowdSale.DEFAULT_ADMIN_ROLE(), admin);
         crowdSale.grantRole(crowdSale.WHITELISTED_ROLE(), whitelisted);
 
         // Set initial price data in the mock
-        priceFeed.setLatestRoundData(
-            1,
-            2000 * 10 ** 8,
-            block.timestamp,
-            block.timestamp,
-            1
-        );
+        priceFeed.setLatestRoundData(1, 2000 * 10 ** 8, block.timestamp, block.timestamp, 1);
 
         // Grant the VAULT_CONTROLLER_ROLE to the CrowdSale contract in the VestingVault
         vestingVault.grantRole(VAULT_CONTROLLER_ROLE, address(crowdSale));
     }
 
     function testWithoutFeed() public {
-        CrowdSale crowdSaleNoFeed = new CrowdSale(
-            address(0),
-            address(token),
-            wallet,
-            usdRate,
-            vestingEndDate,
-            address(vestingVault)
-        );
+        CrowdSale crowdSaleNoFeed =
+            new CrowdSale(address(0), address(token), wallet, usdRate, vestingEndDate, address(vestingVault));
         assertEq(crowdSaleNoFeed.getTokenAmount(1), 1000);
         assertEq(crowdSaleNoFeed.getWeiAmount(10), 100);
     }
@@ -79,7 +55,7 @@ contract CrowdSaleTest is Test {
     }
 
     function testTokensAvailable() public {
-        assertEq(1000000 * 10 ** 18, crowdSale.tokensAvailable());
+        assertEq(1_000_000 * 10 ** 18, crowdSale.tokensAvailable());
     }
 
     function testBuyTokens() public {
@@ -87,7 +63,7 @@ contract CrowdSaleTest is Test {
 
         vm.deal(whitelisted, 2 ether); // Provide enough ether to the whitelisted account
         vm.prank(whitelisted);
-        crowdSale.buyTokens{value: buyAmount}(whitelisted);
+        crowdSale.buyTokens{ value: buyAmount }(whitelisted);
 
         crowdSale.getTokenAmount(buyAmount);
         assertEq(crowdSale.fundsRaised(), buyAmount);
@@ -107,7 +83,7 @@ contract CrowdSaleTest is Test {
 
         vm.expectRevert();
         vm.prank(address(0x3));
-        crowdSale.buyTokens{value: buyAmount}(address(0x3));
+        crowdSale.buyTokens{ value: buyAmount }(address(0x3));
     }
 
     function testExternalBuyTokensRevertWithoutAdmin() public {
@@ -143,7 +119,7 @@ contract CrowdSaleTest is Test {
 
         vm.expectRevert();
         vm.prank(whitelisted);
-        crowdSale.buyTokens{value: buyAmount}(whitelisted);
+        crowdSale.buyTokens{ value: buyAmount }(whitelisted);
     }
 
     function testSupportsInterface() public {
@@ -163,13 +139,8 @@ contract CrowdSaleTest is Test {
         assertEq(priceFeed.description(), "Mock Aggregator");
         assertEq(priceFeed.version(), 1);
 
-        (
-            uint80 roundId,
-            int256 answer,
-            uint256 startedAt,
-            uint256 updatedAt,
-            uint80 answeredInRound
-        ) = priceFeed.getRoundData(1);
+        (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound) =
+            priceFeed.getRoundData(1);
         assertEq(roundId, 1);
         assertEq(answer, 2000 * 10 ** 8);
         assertEq(startedAt, 1);
@@ -184,7 +155,7 @@ contract CrowdSaleTest is Test {
         vm.deal(whitelisted, 2 ether); // Provide enough ether to the whitelisted account
 
         vm.prank(whitelisted);
-        (bool success, ) = address(crowdSale).call{value: buyAmount}("");
+        (bool success,) = address(crowdSale).call{ value: buyAmount }("");
         assertTrue(success, "Fallback function call failed");
 
         uint256 tokenAmount = crowdSale.getTokenAmount(buyAmount);
@@ -199,7 +170,7 @@ contract CrowdSaleTest is Test {
         vm.deal(whitelisted, 2 ether); // Provide enough ether to the whitelisted account
 
         vm.prank(whitelisted);
-        (bool success, ) = address(crowdSale).call{value: buyAmount}("");
+        (bool success,) = address(crowdSale).call{ value: buyAmount }("");
         assertTrue(success, "Receive function call failed");
 
         uint256 tokenAmount = crowdSale.getTokenAmount(buyAmount);

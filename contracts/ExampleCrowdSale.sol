@@ -3,7 +3,7 @@
 
 pragma solidity ^0.8.24;
 
-import {CrowdSale} from "./library/CrowdSale.sol";
+import { CrowdSale } from "./library/CrowdSale.sol";
 
 /**
  * @title ExampleCrowdSale
@@ -17,13 +17,6 @@ contract ExampleCrowdSale is CrowdSale {
         uint256 vestingEndDate_,
         address vestingVault_
     )
-        CrowdSale(
-            priceFeed_,
-            token_,
-            wallet_,
-            usdRate_,
-            vestingEndDate_,
-            vestingVault_
-        )
-    {}
+        CrowdSale(priceFeed_, token_, wallet_, usdRate_, vestingEndDate_, vestingVault_)
+    { }
 }

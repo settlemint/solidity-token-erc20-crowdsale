@@ -19,7 +19,7 @@ contract VestingVaultTest is Test {
     address private userTwo;
     address private userThree;
     address private wallet;
-    uint256 private constant initialSupply = 3765000000 * 10 ** 18;
+    uint256 private constant initialSupply = 3_765_000_000 * 10 ** 18;
     uint256 private releaseTime;
     uint256 private constant tokenAmount = 1;
     uint256 private constant increaseExampleTokensBy = 5;
@@ -87,9 +87,7 @@ contract VestingVaultTest is Test {
         vestingVault.addBeneficiary(userOne, releaseTime, tokenAmount);
         vm.startPrank(wallet);
         token.transfer(address(vestingVault), tokenAmount);
-        IVestingVault.Vesting[] memory vestings = vestingVault.vestingFor(
-            userOne
-        );
+        IVestingVault.Vesting[] memory vestings = vestingVault.vestingFor(userOne);
         uint256 totalExampleTokenAmount = 0;
         for (uint256 i = 0; i < vestings.length; i++) {
             totalExampleTokenAmount += vestings[i].tokenAmount;
@@ -107,17 +105,11 @@ contract VestingVaultTest is Test {
         vm.prank(wallet);
         token.transfer(address(vestingVault), tokenAmount);
 
-        vestingVault.addBeneficiary(
-            userOne,
-            releaseTime,
-            increaseExampleTokensBy
-        );
+        vestingVault.addBeneficiary(userOne, releaseTime, increaseExampleTokensBy);
         vm.prank(wallet);
         token.transfer(address(vestingVault), increaseExampleTokensBy);
 
-        IVestingVault.Vesting[] memory vestings = vestingVault.vestingFor(
-            userOne
-        );
+        IVestingVault.Vesting[] memory vestings = vestingVault.vestingFor(userOne);
         uint256 totalExampleTokenAmount;
         for (uint256 i = 0; i < vestings.length; i++) {
             totalExampleTokenAmount += vestings[i].tokenAmount;
@@ -137,11 +129,7 @@ contract VestingVaultTest is Test {
         vestingVault.addBeneficiary(userOne, releaseTime, tokenAmount);
 
         vm.expectEmit(true, true, true, true);
-        emit IVestingVault.VestingLockedIn(
-            userOne,
-            releaseTime + 1,
-            tokenAmount
-        );
+        emit IVestingVault.VestingLockedIn(userOne, releaseTime + 1, tokenAmount);
         vestingVault.addBeneficiary(userOne, releaseTime + 1, tokenAmount);
 
         vm.stopPrank();
@@ -153,9 +141,7 @@ contract VestingVaultTest is Test {
         vm.prank(wallet);
         token.transfer(address(vestingVault), tokenAmount);
 
-        IVestingVault.Vesting[] memory vestings = vestingVault.vestingFor(
-            userOne
-        );
+        IVestingVault.Vesting[] memory vestings = vestingVault.vestingFor(userOne);
         assertEq(vestings[0].beneficiary, userOne);
     }
 
@@ -187,7 +173,7 @@ contract VestingVaultTest is Test {
 
     function testFailToReleaseTokensBeforeReleaseTime() public {
         vestingVault.grantRole(vestingVault.VAULT_CONTROLLER_ROLE(), adminUser);
-        uint256 veryLargeReleaseTime = 3114690041;
+        uint256 veryLargeReleaseTime = 3_114_690_041;
 
         vestingVault.addBeneficiary(userTwo, veryLargeReleaseTime, tokenAmount);
         token.transfer(address(vestingVault), tokenAmount);
