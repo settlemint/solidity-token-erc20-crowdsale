@@ -48,13 +48,13 @@ contract CrowdSaleTest is Test {
         assertEq(crowdSaleNoFeed.getWeiAmount(10), 100);
     }
 
-    function testInitialization() public {
+    function testInitialization() public view {
         assertEq(crowdSale.wallet(), wallet);
         assertEq(address(crowdSale.token()), address(token));
         assertEq(crowdSale.fundsRaised(), 0);
     }
 
-    function testTokensAvailable() public {
+    function testTokensAvailable() public view {
         assertEq(1_000_000 * 10 ** 18, crowdSale.tokensAvailable());
     }
 
@@ -122,19 +122,19 @@ contract CrowdSaleTest is Test {
         crowdSale.buyTokens{ value: buyAmount }(whitelisted);
     }
 
-    function testSupportsInterface() public {
+    function testSupportsInterface() public view {
         assertTrue(crowdSale.supportsInterface(type(ICrowdSale).interfaceId));
         assertTrue(crowdSale.supportsInterface(type(Pausable).interfaceId));
         assertTrue(token.supportsInterface(type(IERC165).interfaceId));
         assertTrue(vestingVault.supportsInterface(type(IERC165).interfaceId));
     }
 
-    function testCrowdsaleParameters() public {
+    function testCrowdsaleParameters() public view {
         assertEq(address(crowdSale.token()), address(token));
         assertEq(crowdSale.wallet(), wallet);
     }
 
-    function testMockAggregator() public {
+    function testMockAggregator() public view {
         assertEq(priceFeed.decimals(), 8);
         assertEq(priceFeed.description(), "Mock Aggregator");
         assertEq(priceFeed.version(), 1);
