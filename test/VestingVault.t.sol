@@ -57,7 +57,7 @@ contract VestingVaultTest is Test {
         vm.stopPrank();
     }
 
-    function testHasToken() public {
+    function testHasToken() public view {
         assertEq(address(vestingVault.token()), address(token));
     }
 
@@ -208,8 +208,8 @@ contract VestingVaultTest is Test {
         vestingVault.release();
     }
 
-    function testSupportsERC165Interface() public {
-        bytes4 ERC165InterfaceId = 0x01ffc9a7;
-        assertTrue(vestingVault.supportsInterface(ERC165InterfaceId));
+    function testSupportsERC165Interface() public view {
+        bytes4 erc165InterfaceId = 0x01ffc9a7;
+        assertTrue(vestingVault.supportsInterface(erc165InterfaceId));
     }
 }
