@@ -9,7 +9,7 @@
 <br/>
 <p align="center">
 <a href="https://github.com/settlemint/solidity-token-erc20-crowdsale/actions?query=branch%3Amain"><img src="https://github.com/settlemint/solidity-token-erc20-crowdsale/actions/workflows/solidity.yml/badge.svg?event=push&branch=main" alt="CI status" /></a>
-<a href="https://fsl.software" rel="nofollow"><img src="https://img.shields.io/npm/l/@settlemint/sdk" alt="License"></a>
+<a href="https://fsl.software" rel="nofollow"><img src="https://img.shields.io/npm/l/@settlemint/solidity-token-erc20-crowdsale" alt="License"></a>
 <a href="https://www.npmjs.com/package/@settlemint/solidity-token-erc20-crowdsale" rel="nofollow"><img src="https://img.shields.io/npm/dw/@settlemint/solidity-token-erc20-crowdsale" alt="npm"></a>
 <a href="https://github.com/settlemint/solidity-token-erc20-crowdsale" rel="nofollow"><img src="https://img.shields.io/github/stars/settlemint/solidity-token-erc20-crowdsale" alt="stars"></a>
 </p>
