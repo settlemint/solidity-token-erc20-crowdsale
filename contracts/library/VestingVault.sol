@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: FSL-1.1-MIT
 // SettleMint.com
 
 pragma solidity ^0.8.24;
