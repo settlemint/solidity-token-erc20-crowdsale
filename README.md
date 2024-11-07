@@ -21,7 +21,7 @@ forge init my-project --template settlemint/solidity-token-erc20-crowdsale
 Or if you want to use this set as a dependency of your own,
 
 ```shell
-npm install @settlemint/solidity-token-erc20-crowdsale
+bun install @settlemint/solidity-token-erc20-crowdsale
 ```
 
 ## DX: Foundry & Hardhat hybrid
