@@ -159,23 +159,24 @@ contract VestingVaultTest is Test {
         assertEq(token.balanceOf(address(vestingVault)), 0);
     }
 
-    function testFailToReleaseTokensWithLessThanOneToken() public {
+    function testReleaseTokensWithLessThanOneToken() public {
         vestingVault.grantRole(vestingVault.VAULT_CONTROLLER_ROLE(), adminUser);
 
         vm.warp(releaseTime + 1);
 
         vm.startPrank(userThree);
-        vm.expectRevert(" VestingVault: Cannot release 0 tokens");
+        vm.expectRevert("VestingVault: Cannot release 0 tokens");
         vestingVault.release();
 
         vm.stopPrank();
     }
 
-    function testFailToReleaseTokensBeforeReleaseTime() public {
+    function testReleaseTokensBeforeReleaseTime() public {
         vestingVault.grantRole(vestingVault.VAULT_CONTROLLER_ROLE(), adminUser);
         uint256 veryLargeReleaseTime = 3_114_690_041;
 
         vestingVault.addBeneficiary(userTwo, veryLargeReleaseTime, tokenAmount);
+        vm.prank(wallet);
         token.transfer(address(vestingVault), tokenAmount);
 
         vm.expectRevert("VestingVault: Cannot release 0 tokens");
