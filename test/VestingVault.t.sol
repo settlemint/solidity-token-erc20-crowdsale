@@ -159,7 +159,7 @@ contract VestingVaultTest is Test {
         assertEq(token.balanceOf(address(vestingVault)), 0);
     }
 
-    function testFailToReleaseTokensWithLessThanOneToken() public {
+    function testReleaseTokensWithLessThanOneToken() public {
         vestingVault.grantRole(vestingVault.VAULT_CONTROLLER_ROLE(), adminUser);
 
         vm.warp(releaseTime + 1);
@@ -171,7 +171,7 @@ contract VestingVaultTest is Test {
         vm.stopPrank();
     }
 
-    function testFailToReleaseTokensBeforeReleaseTime() public {
+    function testReleaseTokensBeforeReleaseTime() public {
         vestingVault.grantRole(vestingVault.VAULT_CONTROLLER_ROLE(), adminUser);
         uint256 veryLargeReleaseTime = 3_114_690_041;
 
