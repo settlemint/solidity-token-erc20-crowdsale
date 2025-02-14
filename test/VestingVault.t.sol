@@ -165,7 +165,7 @@ contract VestingVaultTest is Test {
         vm.warp(releaseTime + 1);
 
         vm.startPrank(userThree);
-        vm.expectRevert(" VestingVault: Cannot release 0 tokens");
+        vm.expectRevert("VestingVault: Cannot release 0 tokens");
         vestingVault.release();
 
         vm.stopPrank();
@@ -176,6 +176,7 @@ contract VestingVaultTest is Test {
         uint256 veryLargeReleaseTime = 3_114_690_041;
 
         vestingVault.addBeneficiary(userTwo, veryLargeReleaseTime, tokenAmount);
+        vm.prank(wallet);
         token.transfer(address(vestingVault), tokenAmount);
 
         vm.expectRevert("VestingVault: Cannot release 0 tokens");
