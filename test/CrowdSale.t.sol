@@ -80,10 +80,12 @@ contract CrowdSaleTest is Test {
 
     function testBuyTokensRevertWithoutWhitelist() public {
         uint256 buyAmount = 1 ether;
+        address buyer = address(0x3);
 
+        vm.deal(buyer, buyAmount);
         vm.expectRevert();
-        vm.prank(address(0x3));
-        crowdSale.buyTokens{ value: buyAmount }(address(0x3));
+        vm.prank(buyer);
+        crowdSale.buyTokens{ value: buyAmount }(buyer);
     }
 
     function testExternalBuyTokensRevertWithoutAdmin() public {
@@ -117,6 +119,7 @@ contract CrowdSaleTest is Test {
         vm.prank(admin);
         crowdSale.pause();
 
+        vm.deal(whitelisted, buyAmount);
         vm.expectRevert();
         vm.prank(whitelisted);
         crowdSale.buyTokens{ value: buyAmount }(whitelisted);
